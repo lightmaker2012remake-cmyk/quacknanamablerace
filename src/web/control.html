@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QuackNana Marble Race - Control Panel</title>
+  <link rel="icon" href="/icon.png">
+  <link rel="stylesheet" href="/css/control.css">
+</head>
+<body>
+  <header>
+    <img src="/icon.png" alt="" class="logo">
+    <div>
+      <h1>QuackNana Marble Race</h1>
+      <p class="sub">Control panel - the race runs in the other window</p>
+    </div>
+    <div class="phase" id="phase">...</div>
+  </header>
+
+  <main>
+    <section class="card wide">
+      <h2>1. Connect your YouTube live stream</h2>
+      <p class="hint">Type your channel <b>@handle</b> (it finds your live stream by itself) or paste the link of the live stream. No API key needed.</p>
+      <div class="row">
+        <input id="target" type="text" placeholder="@YourChannel  or  https://www.youtube.com/watch?v=...">
+        <button id="connect" class="primary">Connect</button>
+        <button id="disconnect">Disconnect</button>
+      </div>
+      <div class="status" id="ytStatus"><span class="dot"></span><span id="ytText">Not connected</span></div>
+      <div class="stats" id="ytStats"></div>
+    </section>
+
+    <section class="card">
+      <h2>2. Put it on stream (OBS)</h2>
+      <p class="hint">Best quality: add a <b>Browser Source</b> with this link, width <b>1080</b> and height <b>1920</b>:</p>
+      <div class="row">
+        <input id="obsUrl" type="text" readonly>
+        <button id="copyUrl">Copy</button>
+      </div>
+      <p class="hint">Want the game sound in OBS too? Add <code>?sound=1</code> to the end of the link and tick <i>Control audio via OBS</i>. (Or just use <b>Window Capture</b> on the game window.)</p>
+      <div class="row wrap">
+        <button id="openGame">Open game window</button>
+        <button id="sizeFull" title="for OBS Window Capture: the window becomes taller than most screens">Window 1080x1920</button>
+        <button id="sizeFit">Fit window to screen</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Race controls</h2>
+      <div class="grid2">
+        <button id="start" class="primary">Start race now</button>
+        <button id="end">End race / skip</button>
+        <button id="bots5">Add 5 test ducks</button>
+        <button id="botsClear">Remove test ducks</button>
+        <button id="clearAll" class="danger">Remove everyone</button>
+      </div>
+      <h3>Try the stream effects</h3>
+      <div class="grid2">
+        <button id="tLike">Test like (boost)</button>
+        <button id="tSub">Test subscriber</button>
+        <button id="tSuper">Test super chat</button>
+        <button id="tEnter">Fake viewer types "enter"</button>
+      </div>
+      <p class="hint">Shortcuts in the game window: <b>Space</b> start, <b>B</b> test ducks, <b>L</b>/<b>S</b>/<b>G</b> like/sub/super chat, <b>E</b> end, <b>M</b> mute, <b>F11</b> fullscreen, <b>C</b> this panel.</p>
+    </section>
+
+    <section class="card wide">
+      <h2>Settings</h2>
+      <form id="settings" autocomplete="off">
+        <div class="fields">
+          <label>Join word(s) <input name="joinKeywords" type="text" title="comma separated"></label>
+          <label>Leave word(s) <input name="leaveKeywords" type="text" title="comma separated"></label>
+          <label>Countdown between races (seconds) <input name="lobbySeconds" type="number" min="10" max="900"></label>
+          <label>Race length (seconds) <input name="raceSeconds" type="number" min="30" max="600"></label>
+          <label>Time limit (seconds, 0 = auto) <input name="raceMaxSeconds" type="number" min="0" max="1200"></label>
+          <label>Winner screen (seconds) <input name="resultsSeconds" type="number" min="5" max="60"></label>
+          <label>Max players <input name="maxPlayers" type="number" min="2" max="200"></label>
+          <label>Marble size (18-28) <input name="marbleSize" type="number" min="18" max="28"></label>
+          <label>Course
+            <select name="course" id="courseSelect"><option value="random">Random (all 5)</option></select>
+          </label>
+          <label>Like goal every <input name="likeGoalStep" type="number" min="1"></label>
+          <label>Sub goal every <input name="subGoalStep" type="number" min="1"></label>
+          <label>Fill with CPU ducks up to (0 = off) <input name="botFill" type="number" min="0" max="100"></label>
+          <label>Sound volume <input name="soundVolume" type="range" min="0" max="1" step="0.05"></label>
+          <label>Music volume <input name="musicVolume" type="range" min="0" max="1" step="0.05"></label>
+        </div>
+        <div class="checks">
+          <label><input name="keepPlayers" type="checkbox"> Everyone who entered races again next round</label>
+          <label><input name="showNames" type="checkbox"> Show names on the marbles</label>
+          <label><input name="likeBoost" type="checkbox"> Likes boost random marbles</label>
+          <label><input name="subStorm" type="checkbox"> New subscriber = SUB STORM (everyone boosts)</label>
+          <label><input name="superChatVip" type="checkbox"> Super chats / new members get a golden marble</label>
+          <label><input name="music" type="checkbox"> Background music</label>
+          <label><input name="autoConnect" type="checkbox"> Connect to YouTube when the app starts</label>
+        </div>
+        <div class="row end">
+          <span class="saved" id="saved"></span>
+          <button type="submit" class="primary">Save settings</button>
+        </div>
+        <p class="hint">Race length and marble size apply from the next lobby. Changing the course or race length during the lobby rebuilds the course right away.</p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Live chat</h2>
+      <div class="chat" id="chat"><p class="hint">Chat messages show up here when you are connected.</p></div>
+    </section>
+
+    <section class="card">
+      <h2>All-time winners</h2>
+      <ol class="board" id="board"></ol>
+      <div class="row end">
+        <button id="resetBoard" class="danger">Reset winners</button>
+      </div>
+    </section>
+  </main>
+  <footer id="footer"></footer>
+  <script type="module" src="/js/control.js"></script>
+</body>
+</html>

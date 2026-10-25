@@ -1,0 +1,101 @@
+QUACKNANA MARBLE RACE
+YouTube Live interactive marble race - vertical 9:16 (1080 x 1920)
+===================================================================
+
+START THE GAME
+--------------
+1. Double-click "QuackNana Marble Race.exe".
+   Windows might say "Windows protected your PC" because the app is new and
+   not signed. Click "More info" and then "Run anyway".
+2. Two windows open:
+   - the GAME window  (this is what you show on your stream)
+   - the CONTROL PANEL (only for you)
+
+CONNECT YOUR LIVE STREAM
+------------------------
+3. Go live on YouTube first (or schedule the stream with the chat turned on).
+4. In the Control Panel type your channel handle, for example  @QuackNana
+   (or paste the link of your live stream) and click Connect.
+   The dot turns green when the game is reading your live chat.
+   No API key and no login are needed.
+   Next time the app connects by itself.
+
+PUT IT IN OBS
+-------------
+Best quality (recommended) - Browser Source:
+   Sources -> + -> Browser
+   URL:     http://127.0.0.1:7777/
+   Width:   1080
+   Height:  1920
+   For the game sounds inside OBS use  http://127.0.0.1:7777/?sound=1
+   and tick "Control audio via OBS". Then press M in the game window to
+   mute it there, so the sound is not played twice.
+
+Simple - Window Capture:
+   Sources -> + -> Window Capture -> pick "QuackNana Marble Race".
+
+Tip: for a vertical stream set the OBS canvas to 1080x1920
+(Settings -> Video -> Base and Output resolution).
+
+HOW VIEWERS PLAY
+----------------
+- A viewer types  enter  in the live chat. Their profile picture becomes a
+  marble and drops into the start pen.
+- The lobby counts down from 2:00. Then the gate opens and all the marbles
+  fall down through the obstacles.
+- The first marble to cross the FINISH line wins. A race takes about 3 minutes.
+- The winner screen shows the winner, 2nd and 3rd place. Then a new 2:00
+  countdown starts and everyone who entered races again.
+- Typing enter during a race puts you in the next race.
+- Typing  leave  takes you out.
+
+LIKES, SUBSCRIBERS AND SUPER CHATS
+----------------------------------
+- Every new LIKE on the stream gives a random marble a speed boost (hearts!).
+  Every 10 likes is a LIKE GOAL: every marble gets a boost.
+- Every new SUBSCRIBER starts a SUB STORM: every marble boosts, with confetti
+  and a "NEW SUBSCRIBER!" banner.
+- Super Chats, Super Stickers, gifts and new Members get a GOLDEN marble and a
+  big boost (and they join the race if they were not in it yet).
+YouTube does not say WHO liked or subscribed, so likes and subs boost the
+race for everyone instead. Above 1,000 subscribers YouTube rounds the number
+(for example 1.23K), so on bigger channels a sub storm only happens when the
+rounded number goes up.
+
+TEST IT WITHOUT GOING LIVE
+--------------------------
+Control Panel buttons: "Add 5 test ducks", "Start race now", "Test like",
+"Test subscriber", "Test super chat", "Fake viewer types enter".
+
+Keys in the game window:
+   SPACE  start the race now        B  add 5 test ducks
+   L      test like                 S  test subscriber
+   G      test super chat           E  end the race / skip
+   M      mute                      F11  fullscreen
+   C      open the Control Panel    H  show the key list
+
+THE 5 COURSES
+-------------
+Duck Pond Dash, Candy Cascade, Lava Peak, Neon Galaxy and Frozen Falls.
+Every course starts with PEGS, then a mix of zig-zag ramps, spinners,
+bumpers, swinging hammers, windmills, trapdoors, tipping buckets, pinwheels,
+diamond pegs, moving platforms and funnels. A random course is picked every
+round (you can lock one course in the Settings).
+
+SETTINGS (in the Control Panel)
+-------------------------------
+Join word, countdown time, race length, time limit, max players, marble size,
+names on the marbles, likes / subs / super chat effects, CPU ducks, sound and
+music volume. Settings and the all-time winners list are saved in
+   %APPDATA%\QuackNana Marble Race
+
+PROBLEMS?
+---------
+- "Not live right now": start the live stream first. The game checks again
+  every 20 seconds by itself.
+- Nobody can join: check the live chat is on, and not set to subscribers or
+  members only (then only they can type enter).
+- Port 7777 is busy: the game uses the next free port (7778, 7779, ...).
+  The Control Panel always shows the right OBS link.
+- The game window can be resized; it always stays 9:16. Press F11 for
+  fullscreen.

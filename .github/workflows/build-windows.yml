@@ -1,0 +1,41 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - run: npm ci
+
+      - run: npm run build:win
+
+      - name: Make the zip
+        shell: pwsh
+        run: |
+          Rename-Item "dist/QuackNana Marble Race-win32-x64" "QuackNana Marble Race"
+          Compress-Archive -Path "dist/QuackNana Marble Race", "HOW-TO-USE.txt" -DestinationPath "QuackNana-Marble-Race-Windows.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: QuackNana-Marble-Race-Windows
+          path: QuackNana-Marble-Race-Windows.zip
+
+      - name: Attach to the GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: QuackNana-Marble-Race-Windows.zip
