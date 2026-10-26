@@ -3,8 +3,8 @@
 A YouTube Live interactive marble race for vertical streams (9:16, 1080×1920).
 
 Viewers type **`enter`** in the live chat and their profile picture becomes a marble. After a 2-minute
-lobby countdown the gate opens and every marble falls through the obstacles. The race takes about
-3 minutes, and the first marble across the finish line wins. Then the winner screen shows, a new
+lobby countdown the gate opens and every marble bounces down through the obstacles. The race takes
+about 1 minute, and the first marble across the finish line wins. Then the winner screen shows, a new
 2-minute countdown starts, and everyone who entered races again.
 
 ![icon](build/icon.png)
@@ -19,13 +19,17 @@ lobby countdown the gate opens and every marble falls through the obstacles. The
   *Neon Galaxy* and *Frozen Falls*. Every course starts with **pegs**, then mixes zig-zag ramps,
   spinners, pinball bumpers, swinging hammers, windmills, trapdoors, tipping buckets, pinwheels,
   diamond pegs, moving platforms and funnels. Each course is built to last the race length you choose
-  (3 minutes by default).
+  (1 minute by default), and every section has wall deflectors and peg rows, so no marble can slide
+  through a section without bouncing.
 - **Likes and subscribers do something good.**
   - Each new like boosts a random marble, and every 10 likes (a like goal) boosts every marble.
   - Each new subscriber starts a **SUB STORM**: every marble gets boosted, with confetti.
   - Super Chats, Super Stickers, gifts and new members get a **golden marble** and a big boost.
+- **Made to keep people watching**: a "winner in about 0:25" countdown, NEW LEADER / NECK AND NECK /
+  FINAL STRETCH callouts, a "your picture becomes a marble" demo in the lobby, and a rotating
+  call to action.
 - Live leaders list, minimap, rank badges, a crown for the last winner, an all-time winners
-  leaderboard, a join feed, sound effects and generated chiptune music.
+  leaderboard, a join feed, soft mallet and bell sound effects, and generated background music.
 - A **control panel** to connect YouTube, start or end races, test every effect without going live
   (test ducks, test like, sub and super chat), and change settings.
 - An **OBS Browser Source** at `http://127.0.0.1:7777/` that renders at exactly 1080×1920, or you can

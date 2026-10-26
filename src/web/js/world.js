@@ -1,6 +1,6 @@
 // Draws the course (background, obstacles, finish line) and the marbles.
 
-import { makeCanvas, text, crown, TITLE, BODY } from './gfx.js';
+import { makeCanvas, text, crown, roundRect, TITLE, BODY } from './gfx.js';
 
 const W = 1080;
 const H = 1920;
@@ -111,6 +111,7 @@ export class World {
 
   makeThemeSprites() {
     const th = this.theme;
+    this.hookGlow = null;
     // peg with a soft glow
     const ps = makeCanvas(64, 64);
     const g = ps.getContext('2d');
@@ -465,10 +466,73 @@ export class World {
     ctx.fillStyle = th.label;
     for (const s of this.course.sections) {
       if (s.name === 'FINISH') continue;
-      const y = s.name === 'START' ? 420 : s.y0 + 60;
+      if (s.name === 'START') {
+        this.drawPenHook(ctx, cam);
+        continue;
+      }
+      const y = s.y0 + 60;
       if (y < cam - 120 || y > cam + H + 120) continue;
       ctx.fillText(s.name, W / 2, y);
     }
+  }
+
+  // the lobby pen explains the game to anyone who just scrolled in
+  drawPenHook(ctx, cam) {
+    if (this.phase !== 'lobby' || cam > 900) return;
+    const th = this.theme;
+    const t = performance.now() / 1000;
+    text(ctx, 'YOUR PICTURE', W / 2, 300, { size: 78, color: '#ffffff', stroke: '#1a1030', strokeWidth: 12 });
+    text(ctx, 'BECOMES A MARBLE!', W / 2, 382, { size: 66, color: th.accent, stroke: '#1a1030', strokeWidth: 11 });
+    const r = 70 * (1 + Math.sin(t * 3) * 0.04);
+    const x = W / 2;
+    const y = 520 + Math.sin(t * 2) * 8;
+    if (!this.hookGlow) this.hookGlow = glowSprite(150, rgba(th.accent, 0.5), 0.3);
+    ctx.drawImage(this.hookGlow, x - 150, y - 150, 300, 300);
+    const g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.35, r * 0.1, x, y, r);
+    g.addColorStop(0, '#9aa4ff');
+    g.addColorStop(1, '#3b2f8f');
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+    // "this could be you" silhouette
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x, y, r - 4, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.beginPath();
+    ctx.arc(x, y - r * 0.2, r * 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(x, y + r * 0.62, r * 0.58, r * 0.42, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    ctx.lineWidth = 8;
+    ctx.strokeStyle = th.accent;
+    ctx.beginPath();
+    ctx.arc(x, y, r - 4, 0, Math.PI * 2);
+    ctx.stroke();
+    const hl = ctx.createRadialGradient(x - r * 0.35, y - r * 0.45, 0, x - r * 0.35, y - r * 0.45, r * 0.8);
+    hl.addColorStop(0, 'rgba(255,255,255,0.55)');
+    hl.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = hl;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    // "YOU?" tag
+    ctx.save();
+    ctx.translate(x + r * 0.95, y - r * 0.7);
+    ctx.rotate(0.18);
+    roundRect(ctx, -56, -26, 112, 52, 26);
+    ctx.fillStyle = '#ff4d7d';
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#1a1030';
+    ctx.stroke();
+    text(ctx, 'YOU?', 0, 3, { size: 34, color: '#ffffff', shadow: false });
+    ctx.restore();
+    text(ctx, `TYPE ${this.joinWord || 'ENTER'} IN CHAT`, W / 2, 640, { size: 40, color: '#ffffff', stroke: '#1a1030', strokeWidth: 8 });
   }
 
   drawFinish(ctx, cam, now) {

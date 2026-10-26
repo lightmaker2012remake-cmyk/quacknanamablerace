@@ -168,8 +168,21 @@ function onFx(e) {
       fx.ring(e.x2, e.y2, '#d0b3ff', 50);
       sound.poof();
       break;
+    case 'leader':
+      fx.callout({ text: 'NEW LEADER!', sub: e.name, avatar: e.avatar, color: '#ffd23f' });
+      sound.chime();
+      break;
+    case 'stretch':
+      fx.callout({ text: 'FINAL STRETCH!', color: '#ff6b6b' });
+      sound.rise();
+      break;
+    case 'neck':
+      fx.callout({ text: 'NECK AND NECK!', color: '#ff7eb9' });
+      sound.rise();
+      break;
     case 'lobby':
       fx.screen.length = 0;
+      fx.callouts.length = 0;
       break;
     default:
       break;
@@ -191,6 +204,7 @@ const net = new Net({
     world.rank = st.rank;
     world.phase = st.phase;
     world.showNames = !!(st.opts && st.opts.showNames);
+    world.joinWord = String((st.opts && st.opts.joinWord) || 'enter').toUpperCase();
     fx.toastTop = st.phase === 'lobby' || st.phase === 'countdown';
     sound.setSong(st.phase === 'race' ? 'race' : 'lobby');
     if (st.opts) sound.setVolumes(muted ? 0 : st.opts.soundVolume, st.opts.music, st.opts.musicVolume);

@@ -9,7 +9,7 @@ const DEFAULTS = {
   joinKeywords: ['enter', '!enter'],
   leaveKeywords: ['leave', '!leave'],
   lobbySeconds: 120, // countdown between races
-  raceSeconds: 180, // how long a race should take (the course length is built to match)
+  raceSeconds: 60, // how long a race should take (the course length is built to match)
   raceMaxSeconds: 0, // 0 = automatic time limit
   resultsSeconds: 12,
   keepPlayers: true, // everyone that entered races again next round
@@ -27,6 +27,7 @@ const DEFAULTS = {
   music: true,
   musicVolume: 0.35,
   port: 7777,
+  settingsVersion: 2,
 };
 
 const LIMITS = {
@@ -42,6 +43,7 @@ const LIMITS = {
   soundVolume: [0, 1],
   musicVolume: [0, 1],
   port: [1024, 65535],
+  settingsVersion: [1, 1000],
 };
 
 function clean(input) {
@@ -76,6 +78,9 @@ class Settings {
     this.values = { ...DEFAULTS };
     try {
       const raw = JSON.parse(fs.readFileSync(this.file, 'utf8'));
+      // version 1 saved 3-minute races as the default; races are 1 minute now
+      if ((raw.settingsVersion || 1) < 2 && Number(raw.raceSeconds) === 180) raw.raceSeconds = 60;
+      raw.settingsVersion = DEFAULTS.settingsVersion;
       Object.assign(this.values, clean(raw));
     } catch (e) {
       // first run, or a broken file: use the defaults

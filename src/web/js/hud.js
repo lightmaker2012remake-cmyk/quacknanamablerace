@@ -70,8 +70,13 @@ export class Hud {
       label = 'GET READY';
       value = String(Math.max(1, Math.ceil(st.timer)));
     } else if (st.phase === 'race') {
-      label = 'RACE TIME';
-      value = fmtTime(st.raceTime);
+      if (st.eta != null) {
+        label = 'WINNER IN ABOUT';
+        value = fmtTime(st.eta);
+      } else {
+        label = 'RACE TIME';
+        value = fmtTime(st.raceTime);
+      }
     } else if (st.phase === 'results') {
       label = 'NEXT RACE';
       value = fmtTime(st.timer + ((st.opts && st.opts.lobbySeconds) || 0));
@@ -202,35 +207,50 @@ export class Hud {
     person(ctx, 760, 1756, 34, '#7fdcff');
     const count = st.players + (st.pending ? ` (+${st.pending})` : '');
     text(ctx, `${count} RACING`, 790, 1758, { size: 30, align: 'left', color: '#ffffff', shadow: false, maxWidth: 260 });
-    // join call to action
+    // rotating call to action: what to type, and why it is worth it
     const word = String(opts.joinWord || 'enter').toUpperCase();
-    const pre = 'TYPE';
-    const post = st.phase === 'race' || st.phase === 'results' ? 'TO JOIN NEXT RACE!' : 'IN CHAT TO JOIN!';
+    const racing = st.phase === 'race' || st.phase === 'results';
+    const lines = racing
+      ? [{ pre: 'TYPE', key: word, post: 'TO JOIN NEXT RACE!' }, { text: 'WHO WILL WIN? COMMENT YOUR PICK!' }]
+      : [{ pre: 'TYPE', key: word, post: 'IN CHAT TO JOIN!' }, { text: 'YOUR PFP BECOMES A MARBLE!' }, { text: 'WINNER GETS THE CROWN!' }];
+    const slot = 4;
+    const k = Math.floor(t / slot);
+    const line = lines[k % lines.length];
+    const phase = t - k * slot;
+    const slide = phase < 0.25 ? 1 - phase / 0.25 : 0;
     const pulse = 1 + Math.sin(t * 4) * 0.025;
     ctx.save();
-    ctx.translate(W / 2, 1858);
+    ctx.beginPath();
+    ctx.rect(0, 1812, W, 108);
+    ctx.clip();
+    ctx.translate(W / 2, 1858 + slide * 90);
     ctx.scale(pulse, pulse);
-    ctx.font = `58px ${TITLE}`;
-    const wPre = ctx.measureText(pre + ' ').width;
-    ctx.font = `58px ${TITLE}`;
-    const wWord = ctx.measureText(word).width + 36;
-    const wPost = ctx.measureText(' ' + post).width;
-    let total = wPre + wWord + wPost;
-    const fit = Math.min(1, 1030 / total);
-    ctx.scale(fit, fit);
-    total = wPre + wWord + wPost;
-    let x = -total / 2;
-    text(ctx, pre, x, 0, { size: 58, align: 'left', color: '#ffffff', stroke: '#1a1030', strokeWidth: 9 });
-    x += wPre;
-    roundRect(ctx, x, -40, wWord, 80, 18);
-    ctx.fillStyle = '#ffd23f';
-    ctx.fill();
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = '#1a1030';
-    ctx.stroke();
-    text(ctx, word, x + wWord / 2, 4, { size: 58, color: '#1a1030', shadow: false });
-    x += wWord;
-    text(ctx, ' ' + post, x, 0, { size: 58, align: 'left', color: '#ffffff', stroke: '#1a1030', strokeWidth: 9 });
+    if (line.text) {
+      ctx.font = `58px ${TITLE}`;
+      const fit = Math.min(1, 1030 / ctx.measureText(line.text).width);
+      ctx.scale(fit, fit);
+      text(ctx, line.text, 0, 0, { size: 58, color: '#ffd23f', stroke: '#1a1030', strokeWidth: 9 });
+    } else {
+      ctx.font = `58px ${TITLE}`;
+      const wPre = ctx.measureText(line.pre + ' ').width;
+      const wWord = ctx.measureText(line.key).width + 36;
+      const wPost = ctx.measureText(' ' + line.post).width;
+      const total = wPre + wWord + wPost;
+      const fit = Math.min(1, 1030 / total);
+      ctx.scale(fit, fit);
+      let x = -total / 2;
+      text(ctx, line.pre, x, 0, { size: 58, align: 'left', color: '#ffffff', stroke: '#1a1030', strokeWidth: 9 });
+      x += wPre;
+      roundRect(ctx, x, -40, wWord, 80, 18);
+      ctx.fillStyle = '#ffd23f';
+      ctx.fill();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = '#1a1030';
+      ctx.stroke();
+      text(ctx, line.key, x + wWord / 2, 4, { size: 58, color: '#1a1030', shadow: false });
+      x += wWord;
+      text(ctx, ' ' + line.post, x, 0, { size: 58, align: 'left', color: '#ffffff', stroke: '#1a1030', strokeWidth: 9 });
+    }
     ctx.restore();
   }
 

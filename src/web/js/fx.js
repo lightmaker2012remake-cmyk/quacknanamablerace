@@ -17,6 +17,7 @@ export class Fx {
     this.world = []; // particles in course coordinates
     this.screen = []; // particles in screen coordinates
     this.banners = [];
+    this.callouts = [];
     this.toasts = [];
     this.shakeT = 0;
     this.shakeAmp = 0;
@@ -120,6 +121,12 @@ export class Fx {
     this.banners.push(item);
   }
 
+  // small pill under the title bar: NEW LEADER!, FINAL STRETCH!, ...
+  callout(c) {
+    this.callouts.push(Object.assign({ age: 0, dur: 2.4, color: '#ffd23f' }, c));
+    if (this.callouts.length > 3) this.callouts.shift();
+  }
+
   toast(t) {
     this.toasts.push(Object.assign({ age: 0, color: '#ffffff' }, t));
     if (this.toasts.length > 6) this.toasts.shift();
@@ -154,6 +161,11 @@ export class Fx {
       const b = this.banners[0];
       b.age += dt;
       if (b.age >= b.dur) this.banners.shift();
+    }
+    if (this.callouts.length) {
+      const c = this.callouts[0];
+      c.age += dt;
+      if (c.age >= c.dur) this.callouts.shift();
     }
     for (let i = this.toasts.length - 1; i >= 0; i--) {
       this.toasts[i].age += dt;
@@ -224,10 +236,42 @@ export class Fx {
       if (b.sub) text(ctx, b.sub, 0, b.size * 0.78, { size: b.size * 0.36, font: BODY, weight: '700', color: '#ffffff', stroke: '#1a1030', strokeWidth: 8, maxWidth: 980 });
       ctx.restore();
     }
+    // callout pill, right of the leaders list
+    const c = this.callouts[0];
+    if (c) {
+      const inK = Math.min(1, c.age / 0.22);
+      const outK = c.age > c.dur - 0.3 ? Math.max(0, (c.dur - c.age) / 0.3) : 1;
+      ctx.save();
+      ctx.globalAlpha = outK;
+      ctx.font = `40px ${TITLE}`;
+      const label = c.text;
+      const sub = c.sub || '';
+      const tw = Math.max(ctx.measureText(label).width, sub ? ctx.measureText(sub).width * 0.6 : 0);
+      const hasPic = !!(c.avatar && images);
+      const w = Math.min(660, tw + (hasPic ? 150 : 70));
+      const h = sub ? 96 : 70;
+      const cx = 706;
+      const cy = 236 + h / 2 - (1 - easeOutBack(inK)) * 120;
+      roundRect(ctx, cx - w / 2, cy - h / 2, w, h, h / 2);
+      ctx.fillStyle = 'rgba(12,10,32,0.88)';
+      ctx.fill();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = c.color;
+      ctx.stroke();
+      let tx = cx;
+      if (hasPic) {
+        circleImage(ctx, images(c.avatar), cx - w / 2 + h / 2, cy, h / 2 - 10, c.color, 4);
+        tx += 30;
+      }
+      text(ctx, label, tx, sub ? cy - 16 : cy + 2, { size: 40, color: c.color, stroke: '#1a1030', strokeWidth: 7, maxWidth: w - (hasPic ? 140 : 50) });
+      if (sub) text(ctx, sub, tx, cy + 24, { size: 24, font: BODY, weight: '700', color: '#ffffff', shadow: false, maxWidth: w - (hasPic ? 140 : 50) });
+      ctx.restore();
+    }
     // join feed (bottom-left during races, top-left in the lobby)
     const top = !!this.toastTop;
     let y = top ? 236 : 1660;
-    for (let i = this.toasts.length - 1; i >= 0; i--) {
+    const oldest = Math.max(0, this.toasts.length - (top ? 3 : 6));
+    for (let i = this.toasts.length - 1; i >= oldest; i--) {
       const t = this.toasts[i];
       const slide = Math.min(1, t.age / 0.25);
       const fade = t.age > 4.5 ? Math.max(0, (5 - t.age) / 0.5) : 1;

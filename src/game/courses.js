@@ -59,20 +59,20 @@ const THEMES = {
 
 // Rough leader time (seconds) for each section type, measured with scripts/sim-test.js
 // (single sections, then scaled by CALIBRATION so whole courses come out right).
-const CALIBRATION = 1.14;
+const CALIBRATION = 1.22;
 const ESTIMATE = {
-  pegs: (o) => 5.7 * ((o.rows || 12) / 12) * (o.sx === 110 ? 0.75 : 1),
-  zigzag: (o) => 17 * ((o.n || 5) / 5) * (o.kind === 'ice' ? 0.65 : 1),
-  spinners: (o) => 3.2 * ((o.rows || 4) / 4),
-  bumpers: (o) => 3.0 * ((o.rows || 5) / 5),
-  funnel: () => 1.5,
-  sliders: (o) => 1.8 * ((o.layers || 4) / 4),
-  hammers: (o) => 1.2 * ((o.rows || 2) / 2),
-  windmills: () => 1.0,
-  trapdoors: (o) => 3.0 * ((o.layers || 2) / 2),
+  pegs: (o) => 6.2 * ((o.rows || 12) / 12) * (o.sx === 110 ? 0.8 : 1),
+  zigzag: (o) => 14.7 * ((o.n || 5) / 5) * (o.kind === 'ice' ? 0.65 : 1),
+  spinners: (o) => 3.6 * ((o.rows || 4) / 4),
+  bumpers: (o) => 2.3 * ((o.rows || 5) / 5),
+  funnel: () => 1.8,
+  sliders: (o) => 4.5 * ((o.layers || 4) / 4),
+  hammers: (o) => 4.0 * ((o.rows || 2) / 2),
+  windmills: () => 2.8,
+  trapdoors: (o) => 2.9 * ((o.layers || 2) / 2),
   buckets: (o) => 2.6 * ((o.rows || 2) / 2),
-  pinwheels: (o) => 4.1 * ((o.rows || 5) / 5),
-  diamonds: (o) => 4.0 * ((o.rows || 9) / 9),
+  pinwheels: (o) => 5.2 * ((o.rows || 5) / 5),
+  diamonds: (o) => 5.3 * ((o.rows || 9) / 9),
 };
 
 // The 5 courses. Every course starts with pegs, then a seeded mix of obstacles
@@ -224,12 +224,15 @@ function planSections(def, targetSeconds) {
     const exclude = new Set(recent.slice(-2));
     if (sinceZig < 2) exclude.add('zigzag');
     let type = sinceZig >= 5 ? 'zigzag' : pickWeighted(rng, def.mix, exclude);
-    const opts = variant(type, rng, def);
+    let opts = variant(type, rng, def);
+    // short races get short ramp sections
+    if (type === 'zigzag' && targetSeconds <= 100) opts.n = Math.min(opts.n, rng() < 0.5 ? 3 : 4);
     const remaining = targetSeconds - finale - est;
-    // do not overshoot a short race with a long ramp section
-    if (type === 'zigzag' && ESTIMATE.zigzag(opts) > remaining + 6) {
-      type = 'pinwheels';
-      Object.assign(opts, variant(type, rng, def));
+    // do not overshoot the race length with a long ramp section
+    if (type === 'zigzag' && ESTIMATE.zigzag(opts) * CALIBRATION > remaining + 6) {
+      exclude.add('zigzag');
+      type = pickWeighted(rng, def.mix, exclude);
+      opts = variant(type, rng, def);
     }
     opts.name = nameFor(type);
     plan.push([type, opts]);
@@ -250,6 +253,7 @@ function buildCourse(index, targetSeconds = 180) {
   let y = pen(b);
   for (const [type, opts] of plan) {
     y = SECTIONS[type](b, y, opts);
+    b.sections[b.sections.length - 1].kind = type;
   }
   y = finish(b, y);
   walls(b, -80, b.binFloor + 80);

@@ -213,6 +213,13 @@ class Game extends EventEmitter {
       p.bestT = this.t;
       p.nudges = 0;
     }
+    this.eta = null;
+    this.leaderId = null;
+    this.leadCandidate = null;
+    this.leadSince = 0;
+    this.lastLeaderCall = -1e9;
+    this.stretchCalled = false;
+    this.neckCalled = false;
     this.fx({ fx: 'go' });
   }
 
@@ -224,6 +231,9 @@ class Game extends EventEmitter {
       return;
     }
     let racing = 0;
+    let lead = null;
+    let leadY = -1e9;
+    let secondY = -1e9;
     for (const p of this.players.values()) {
       if (p.finished) continue;
       const m = this.physics.getMarble(p.slot);
@@ -233,13 +243,51 @@ class Game extends EventEmitter {
         continue;
       }
       racing++;
+      if (m.y > leadY) {
+        secondY = leadY;
+        leadY = m.y;
+        lead = p;
+      } else if (m.y > secondY) {
+        secondY = m.y;
+      }
       this.antiStuck(p, m);
     }
+    if (lead && !this.winner) this.raceHype(lead, leadY, secondY, racing);
     if (this.winner) {
       const podiumDone = this.finishOrder.length >= Math.min(3, this.players.size);
       if (podiumDone || racing === 0 || this.t - this.winnerAt > 12) this.enterResults();
     } else if (this.raceTime >= this.raceMax) {
       this.timeUp();
+    }
+  }
+
+  // the bits that keep people watching: winner countdown and race callouts
+  raceHype(lead, leadY, secondY, racing) {
+    const prog = Math.max(0, Math.min(1, leadY / this.course.finishY));
+    // early on trust the course length, later trust how far the leader has got
+    const byLength = Math.max(3, this.course.target - this.raceTime);
+    const byProgress = prog > 0.05 ? this.raceTime / prog - this.raceTime : byLength;
+    const w = Math.max(0, Math.min(1, (prog - 0.15) / 0.5));
+    const est = byProgress * w + byLength * (1 - w);
+    this.eta = this.eta == null ? est : this.eta + (est - this.eta) * 0.03;
+    // announce a new leader once they have held the lead for a moment
+    if (lead.id !== this.leadCandidate) {
+      this.leadCandidate = lead.id;
+      this.leadSince = this.t;
+    } else if (lead.id !== this.leaderId && this.t - this.leadSince > 1.2) {
+      if (this.leaderId && this.raceTime > 5 && prog > 0.15 && this.t - this.lastLeaderCall > 6) {
+        this.lastLeaderCall = this.t;
+        this.fx({ fx: 'leader', slot: lead.slot, name: lead.name, avatar: avatarUrl(lead.id) });
+      }
+      this.leaderId = lead.id;
+    }
+    if (!this.stretchCalled && prog > 0.82) {
+      this.stretchCalled = true;
+      this.fx({ fx: 'stretch' });
+    }
+    if (!this.neckCalled && prog > 0.7 && racing >= 2 && leadY - secondY < 70) {
+      this.neckCalled = true;
+      this.fx({ fx: 'neck' });
     }
   }
 
@@ -753,6 +801,7 @@ class Game extends EventEmitter {
       timer: r1(Math.max(0, this.timer)),
       raceTime: r1(this.raceTime),
       raceMax: this.raceMax,
+      eta: this.phase === 'race' && !this.winner && this.eta != null ? Math.max(1, Math.round(this.eta)) : null,
       waiting: this.phase === 'lobby' && this.players.size === 0,
       course: { index: this.courseIndex, id: this.course.id, name: this.course.name, count: COURSES.length },
       players: this.players.size,

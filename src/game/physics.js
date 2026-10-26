@@ -8,17 +8,17 @@ const { World, Vec2, Circle, Polygon } = planck;
 const PPM = 40; // pixels per meter (the physics runs in meters, everything else in pixels)
 
 const MATERIALS = {
-  wall: { friction: 0.05, restitution: 0.2 },
-  peg: { friction: 0.05, restitution: 0.5 },
-  diamond: { friction: 0.05, restitution: 0.45 },
-  bump: { friction: 0.05, restitution: 0.4 },
-  ramp: { friction: 0.3, restitution: 0.1 },
-  ice: { friction: 0.0, restitution: 0.05 },
-  deflector: { friction: 0.1, restitution: 0.3 },
-  bumper: { friction: 0.1, restitution: 0.5 },
-  sling: { friction: 0.1, restitution: 0.5 },
-  funnel: { friction: 0.15, restitution: 0.15 },
-  moving: { friction: 0.25, restitution: 0.25 },
+  wall: { friction: 0.05, restitution: 0.45 },
+  peg: { friction: 0.05, restitution: 0.7 },
+  diamond: { friction: 0.05, restitution: 0.65 },
+  bump: { friction: 0.05, restitution: 0.6 },
+  ramp: { friction: 0.3, restitution: 0.3 },
+  ice: { friction: 0.0, restitution: 0.25 },
+  deflector: { friction: 0.1, restitution: 0.55 },
+  bumper: { friction: 0.1, restitution: 0.75 },
+  sling: { friction: 0.1, restitution: 0.7 },
+  funnel: { friction: 0.15, restitution: 0.4 },
+  moving: { friction: 0.25, restitution: 0.55 },
 };
 
 const HIT_KINDS = new Set(['peg', 'bumper', 'bump', 'sling', 'diamond']);
@@ -167,7 +167,7 @@ class Physics {
       shape: new Circle(this.radius / PPM),
       density: 1,
       friction: 0.15,
-      restitution: 0.35,
+      restitution: 0.5,
       userData: { marble: slot },
     });
     body.setLinearVelocity(new Vec2(vx / PPM, vy / PPM));

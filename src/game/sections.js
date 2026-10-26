@@ -81,6 +81,23 @@ class CourseBuilder {
   }
 }
 
+// two staggered rows of pegs across the whole width: no marble gets past without a bounce
+function pegBand(b, y) {
+  for (const [row, n, br] of [[0, 7, 20], [1, 6, 46]]) {
+    const yy = y + row * 100;
+    for (let k = 0; k < n; k++) b.circle(MID + (k - (n - 1) / 2) * 130, yy, 10, 'peg');
+    b.circle(WL, yy, br, 'bump');
+    b.circle(WR, yy, br, 'bump');
+  }
+  return y + 100;
+}
+
+// triangles on both walls that push marbles back into the middle
+function wallDeflectors(b, y, out = 100) {
+  b.poly([[WL - 5, y - 75], [WL + out, y], [WL - 5, y + 40]], 'deflector');
+  b.poly([[WR + 5, y - 75], [WR - out, y], [WR + 5, y + 40]], 'deflector');
+}
+
 // ---------------------------------------------------------------- start pen
 function pen(b) {
   const y1 = 820;
@@ -234,6 +251,7 @@ function funnel(b, y0, o = {}) {
   const xR = MID + opening / 2;
   b.bar(WL - 30, y0 + 40, xL, y0 + 40 + depth, 20, 'funnel');
   b.bar(WR + 30, y0 + 40, xR, y0 + 40 + depth, 20, 'funnel');
+  b.circle(MID, y0 + 40 + depth * 0.55, 34, 'bumper', { kick: 520 });
   const ay = y0 + 40 + depth + 115;
   b.kin({
     kind: 'spinner', x: MID, y: ay, angle: 0, r: 62, style: 'cross',
@@ -250,7 +268,7 @@ function funnel(b, y0, o = {}) {
 function sliders(b, y0, o = {}) {
   const layers = o.layers || 4;
   const width = o.width || 330;
-  const amp = o.amp || 290;
+  const amp = o.amp || 215;
   const period = o.period || 3.4;
   let y = y0 + 130;
   for (let i = 0; i < layers; i++) {
@@ -261,11 +279,13 @@ function sliders(b, y0, o = {}) {
       shapes: [{ type: 'poly', pts: rectPts(width, 18) }],
     });
     if (i < layers - 1) {
-      for (const x of [270, 540, 810]) b.circle(x + (b.rng() - 0.5) * 40, y + 110, 12, 'peg');
+      const xs = i % 2 ? [200, 400, 680, 880] : [300, 540, 780];
+      for (const x of xs) b.circle(x, y + 110, 12, 'peg');
+      wallDeflectors(b, y + 110, 90);
     }
     y += 220;
   }
-  const y1 = y - 220 + 110;
+  const y1 = pegBand(b, y - 220 + 140) + 90;
   b.section(o.name || 'SLIDE SHOW', y0, y1);
   b.respawnRow(y0 + 22);
   return y1;
@@ -281,6 +301,7 @@ function hammers(b, y0, o = {}) {
   let bottom = y;
   for (let i = 0; i < rows; i++) {
     const xs = i % 2 === 0 ? [275, 805] : [540];
+    wallDeflectors(b, y - 30, i % 2 === 0 ? 110 : 150);
     xs.forEach((x, j) => {
       b.kin({
         kind: 'hammer', x, y, angle: Math.PI / 2, r: len + 60,
@@ -292,13 +313,11 @@ function hammers(b, y0, o = {}) {
         ],
       });
     });
-    if (i % 2 === 1) {
-      for (const [px, py] of [[150, 120], [930, 120], [205, 260], [875, 260]]) b.circle(px, y + py, 12, 'peg');
-    }
-    bottom = y + len + 50;
-    y += len + 200;
+    // under the swing (lowest point len + 48) with room to spare, then the next row
+    bottom = pegBand(b, y + len + 125);
+    y = bottom + 160;
   }
-  const y1 = bottom + 100;
+  const y1 = bottom + 90;
   b.section(o.name || 'HAMMER TIME', y0, y1);
   b.respawnRow(y0 + 22);
   return y1;
@@ -309,7 +328,7 @@ function windmills(b, y0, o = {}) {
   const r = o.r || 160;
   const n = o.paddles || 6;
   const speed = o.speed || 1.3;
-  const y = y0 + 70 + r;
+  const y = y0 + 150 + r;
   for (const [x, dir] of [[270, 1], [810, -1]]) {
     const shapes = [{ type: 'circle', x: 0, y: 0, r: 28 }];
     for (let i = 0; i < n; i++) {
@@ -323,7 +342,9 @@ function windmills(b, y0, o = {}) {
     });
   }
   b.circle(MID, y - r + 10, 16, 'peg');
-  const y1 = y + r + 100;
+  b.circle(MID, y, 34, 'bumper', { kick: 520 });
+  wallDeflectors(b, y - r - 60, 115);
+  const y1 = pegBand(b, y + r + 85) + 90;
   b.section(o.name || 'WINDMILLS', y0, y1);
   b.respawnRow(y0 + 22);
   return y1;

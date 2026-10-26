@@ -42,8 +42,9 @@ HOW VIEWERS PLAY
 - A viewer types  enter  in the live chat. Their profile picture becomes a
   marble and drops into the start pen.
 - The lobby counts down from 2:00. Then the gate opens and all the marbles
-  fall down through the obstacles.
-- The first marble to cross the FINISH line wins. A race takes about 3 minutes.
+  bounce down through the obstacles.
+- The first marble to cross the FINISH line wins. A race takes about 1 minute
+  (you can change the race length in the Settings).
 - The winner screen shows the winner, 2nd and 3rd place. Then a new 2:00
   countdown starts and everyone who entered races again.
 - Typing enter during a race puts you in the next race.
