@@ -29,7 +29,10 @@ about 1 minute, and the first marble across the finish line wins. Then the winne
   FINAL STRETCH callouts, a "your picture becomes a marble" demo in the lobby, and a rotating
   call to action.
 - Live leaders list, minimap, rank badges, a crown for the last winner, an all-time winners
-  leaderboard, a join feed, soft mallet and bell sound effects, and generated background music.
+  leaderboard and a join feed.
+- **Deep, punchy sound**: booms, wooden toks and movie-trailer brass hits tuned to the music, plus
+  background music that loops forever without a gap. During "3, 2, 1" the music muffles down, and
+  on GO it slams back in.
 - A **control panel** to connect YouTube, start or end races, test every effect without going live
   (test ducks, test like, sub and super chat), and change settings.
 - An **OBS Browser Source** at `http://127.0.0.1:7777/` that renders at exactly 1080×1920, or you can
@@ -104,4 +107,7 @@ YouTube live chat ──▶ src/youtube/live.js ──▶ src/game/game.js (lobb
 - Physics: [planck.js](https://github.com/piqnt/planck.js) (MIT)
 - Fonts: *Luckiest Guy* (Apache 2.0) and *Fredoka* (SIL OFL), both from Google Fonts. The licenses
   are in `src/web/fonts/`.
-- All graphics and sounds are drawn or generated in code.
+- Background music: "Background Music" by ikoliks_aj from Pixabay (track 320427), used under the
+  Pixabay Content License. The file is `src/web/music/background-music.mp3`; the loop points in
+  `src/web/js/audio.js` are set for this song.
+- All graphics and sound effects are drawn or generated in code.

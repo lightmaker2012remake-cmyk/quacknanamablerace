@@ -18,6 +18,7 @@ const MIME = {
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
   '.txt': 'text/plain; charset=utf-8',
+  '.mp3': 'audio/mpeg',
 };
 
 function createServer({ webDir, port, avatars, onControl, welcomeView, welcomeControl }) {

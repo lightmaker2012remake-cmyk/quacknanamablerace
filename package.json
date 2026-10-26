@@ -1,7 +1,7 @@
 {
   "name": "quacknana-marble-race",
   "productName": "QuackNana Marble Race",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "YouTube Live interactive marble race (9:16, 1080x1920). Viewers type ENTER in chat and race as their profile picture.",
   "main": "src/main/main.js",
   "author": "QuackNana",

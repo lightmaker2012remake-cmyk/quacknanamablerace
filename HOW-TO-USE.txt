@@ -75,6 +75,14 @@ Keys in the game window:
    M      mute                      F11  fullscreen
    C      open the Control Panel    H  show the key list
 
+MUSIC AND SOUND
+---------------
+The background music loops forever with no gap or restart. During the
+"3, 2, 1" countdown it muffles down, and on GO it comes back at full blast.
+Turn the music off or change its volume in the Settings (Background music,
+Music volume). If YouTube ever flags the music on your stream, untick
+Background music - the sound effects keep working.
+
 THE 5 COURSES
 -------------
 Duck Pond Dash, Candy Cascade, Lava Peak, Neon Galaxy and Frozen Falls.

@@ -141,7 +141,7 @@ function onFx(e) {
     case 'finish': {
       const m = marblePos(e.slot);
       if (m) fx.sparks(m.x, world.course ? world.course.finishY : m.y, 18, '#fff3a0', 380);
-      sound.finish();
+      sound.finish(e.place);
       break;
     }
     case 'winner': {
@@ -174,11 +174,11 @@ function onFx(e) {
       break;
     case 'stretch':
       fx.callout({ text: 'FINAL STRETCH!', color: '#ff6b6b' });
-      sound.rise();
+      sound.rise('stretch');
       break;
     case 'neck':
       fx.callout({ text: 'NECK AND NECK!', color: '#ff7eb9' });
-      sound.rise();
+      sound.rise('neck');
       break;
     case 'lobby':
       fx.screen.length = 0;
@@ -206,7 +206,7 @@ const net = new Net({
     world.showNames = !!(st.opts && st.opts.showNames);
     world.joinWord = String((st.opts && st.opts.joinWord) || 'enter').toUpperCase();
     fx.toastTop = st.phase === 'lobby' || st.phase === 'countdown';
-    sound.setSong(st.phase === 'race' ? 'race' : 'lobby');
+    sound.setPhase(st.phase);
     if (st.opts) sound.setVolumes(muted ? 0 : st.opts.soundVolume, st.opts.music, st.opts.musicVolume);
   },
   fx: onFx,
@@ -219,8 +219,8 @@ const net = new Net({
       const s = world.course.statics[id];
       if (!s) continue;
       if (s.y > lastSnap.cam - 50 && s.y < lastSnap.cam + H + 50) {
-        if (s.kind === 'bumper' || s.kind === 'sling') sound.boing();
-        else sound.tick();
+        if (s.kind === 'bumper' || s.kind === 'sling') sound.boing(s.x);
+        else sound.tick(s.x);
       }
     }
   },
