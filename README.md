@@ -51,7 +51,8 @@ Full step-by-step instructions are in [HOW-TO-USE.txt](HOW-TO-USE.txt).
 ## Stream kit
 
 The `stream-kit` folder has a ready-made stream title, description and tags
-(`YouTube-title-description-tags.txt`) and two thumbnails: `thumbnail-1280x720.png` for the stream and
+(`YouTube-title-description-tags.txt`) and thumbnails for the stream: `thumbnail-1920x1080.jpg` (full HD and
+under YouTube's 2 MB limit), `thumbnail-1920x1080.png` (full quality) and `thumbnail-1280x720.png`, plus
 `thumbnail-vertical-1080x1920.png` for Shorts and posts.
 
 ## OBS setup

@@ -45,5 +45,7 @@ marble race, marble race live, live marble race, interactive live stream, intera
 =====================================================================
 THUMBNAIL
 =====================================================================
-thumbnail-1280x720.png           - upload this as the stream thumbnail
+thumbnail-1920x1080.jpg          - full HD stream thumbnail (under 2 MB, so YouTube accepts it)
+thumbnail-1920x1080.png          - the same in full quality (2.3 MB: too big for YouTube thumbnails)
+thumbnail-1280x720.png           - the standard YouTube size
 thumbnail-vertical-1080x1920.png - vertical version (Shorts / TikTok / posts)
