@@ -28,6 +28,7 @@ const [appDir] = await packager({
   overwrite: true,
   ignore: [
     /^\/dist($|\/)/, /^\/scripts($|\/)/, /^\/build($|\/)/, /^\/\.git/, /^\/\.github/, /^\/release($|\/)/,
+    /^\/stream-kit($|\/)/,
     /\.map$/, /^\/node_modules\/planck\/(src|docs|testbed)($|\/)/, /planck-with-testbed/,
   ],
   win32metadata: {

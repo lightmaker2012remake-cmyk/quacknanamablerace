@@ -45,6 +45,12 @@ about 1 minute, and the first marble across the finish line wins. Then the winne
 
 Full step-by-step instructions are in [HOW-TO-USE.txt](HOW-TO-USE.txt).
 
+## Stream kit
+
+The `stream-kit` folder has a ready-made stream title, description and tags
+(`YouTube-title-description-tags.txt`) and two thumbnails: `thumbnail-1280x720.png` for the stream and
+`thumbnail-vertical-1080x1920.png` for Shorts and posts.
+
 ## OBS setup
 
 | Method | How |
